@@ -20,6 +20,7 @@ class Splash : AppCompatActivity() {
         }, 3000)
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         bool = false
