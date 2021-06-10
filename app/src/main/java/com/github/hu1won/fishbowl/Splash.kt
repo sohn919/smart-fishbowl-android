@@ -13,13 +13,12 @@ class Splash : AppCompatActivity() {
 
         Handler().postDelayed({
             if (bool) {
-                val intent = Intent(this@Splash, MainActivity::class.java)
+                val intent = Intent(this@Splash, Main::class.java)
                 startActivity(intent)
                 finish()
             }
         }, 3000)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
