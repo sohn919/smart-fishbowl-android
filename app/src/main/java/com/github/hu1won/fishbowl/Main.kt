@@ -34,7 +34,7 @@ class Main : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.expansion_panel_sample_main)
+        setContentView(R.layout.main)
 
         mConnectionStatus = findViewById<View>(R.id.connection_status_textview) as TextView
         mConversationArrayAdapter = ArrayAdapter(this,
@@ -205,7 +205,6 @@ class Main : AppCompatActivity() {
                             Log.e("check", "바이트 받는중.")
                         }
 
-//                        bpm!!.text = "$BPM"
                         Log.e("check", "바이트 ???.")
 //                        temptext.setText(abcd)
                     }
