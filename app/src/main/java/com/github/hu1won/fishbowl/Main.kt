@@ -27,6 +27,7 @@ class Main : AppCompatActivity() {
     private val REQUEST_BLUETOOTH_ENABLE = 100
     private var mConnectionStatus: TextView? = null
     private var mInputEditText: EditText? = null
+    private var mInputEditText_off: EditText? = null
     var mConnectedTask: ConnectedTask? = null
 
     private var mConnectedDeviceName: String? = null
@@ -36,6 +37,8 @@ class Main : AppCompatActivity() {
 
         setContentView(R.layout.main)
 
+        mInputEditText = findViewById<View>(R.id.edit01) as EditText
+        mInputEditText_off = findViewById<View>(R.id.edit02) as EditText
         mConnectionStatus = findViewById<View>(R.id.connection_status_textview) as TextView
         mConversationArrayAdapter = ArrayAdapter(this,
             android.R.layout.simple_list_item_1)
@@ -55,13 +58,23 @@ class Main : AppCompatActivity() {
         }
 
         // 이 버튼은 나중에 아두이노에 신호 줄때 사용하세요!
-//        val sendButton = findViewById<View>(R.id.checkSignalbtn) as Button
-//        sendButton.setOnClickListener {
+        val sendButton = findViewById<View>(R.id.led_on_btn) as Button
+        sendButton.setOnClickListener {
+            var sendMessage = mInputEditText!!.text.toString()
+//            var sendMessage = "ON"
+            if (sendMessage.length > 0) {
+                sendMessage(sendMessage)
+            }
+        }
+
+        val off_sendButton = findViewById<View>(R.id.led_off_btn) as Button
+        off_sendButton.setOnClickListener {
 //            var sendMessage = mInputEditText!!.text.toString()
-//            if (sendMessage.length > 0) {
-//                sendMessage(sendMessage)
-//            }
-//        }
+            var sendMessage = "OFF"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
 
 //        val next222 = findViewById<View>(R.id.next222) as Button
 //        next222.setOnClickListener(object  : View.OnClickListener{
@@ -335,12 +348,14 @@ class Main : AppCompatActivity() {
             Log.d(TAG, "send message: $msg")
             //mConversationArrayAdapter!!.insert("Me:  $msg", 0)
         }
-        // val msg = "bs00000" //여기에 보낼값넣을것
-//        try {
-//            mOutputStream!!.write(msg.toByteArray())
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//        }
+    }
+
+    fun sendMessage_off(msg: String) {
+        if (mConnectedTask != null) {
+            mConnectedTask!!.write(msg)
+            Log.d(TAG, "send message: $msg")
+            //mConversationArrayAdapter!!.insert("Me:  $msg", 0)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
