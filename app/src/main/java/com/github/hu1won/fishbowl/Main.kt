@@ -168,6 +168,15 @@ class Main : AppCompatActivity() {
             }
         }
 
+        val eat_passive = findViewById<View>(R.id.eat_btn) as Button
+        eat_passive.setOnClickListener {
+//            var sendMessage = mInputEditText!!.text.toString()
+            var sendMessage = "FEED"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
+
 //        val next222 = findViewById<View>(R.id.next222) as Button
 //        next222.setOnClickListener(object  : View.OnClickListener{
 //            override fun onClick(v: View?){
