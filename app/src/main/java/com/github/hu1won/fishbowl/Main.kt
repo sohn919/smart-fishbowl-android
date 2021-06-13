@@ -13,6 +13,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
@@ -23,13 +26,15 @@ import java.util.*
 
 
 class Main : AppCompatActivity() {
-
+    private var mWebView: WebView? = null // 웹뷰 선언
+    private var mWebSettings: WebSettings? = null //웹뷰세팅
     private val REQUEST_BLUETOOTH_ENABLE = 100
     private var mConnectionStatus: TextView? = null
     private var mInputEditText: EditText? = null
     private var mInputEditText_off: EditText? = null
     var mConnectedTask: ConnectedTask? = null
     var picker: TimePicker? = null
+    private var recieveph: String? = null
 
     private var mConnectedDeviceName: String? = null
     private var mConversationArrayAdapter: ArrayAdapter<String>? = null
@@ -99,8 +104,8 @@ class Main : AppCompatActivity() {
         // 이 버튼은 나중에 아두이노에 신호 줄때 사용하세요!
         val sendButton = findViewById<View>(R.id.led_on_btn) as Button
         sendButton.setOnClickListener {
-            var sendMessage = mInputEditText!!.text.toString()
-//            var sendMessage = "ON"
+//            var sendMessage = mInputEditText!!.text.toString()
+            var sendMessage = "ON"
             if (sendMessage.length > 0) {
                 sendMessage(sendMessage)
             }
@@ -175,6 +180,30 @@ class Main : AppCompatActivity() {
 //                val intent = Intent(this@Bluetooth, WaterAcitivity::class.java)
 //                startActivity(intent)
 //            }})
+
+        mWebView = findViewById<View>(R.id.webcctv) as WebView?
+        //웹뷰 관련
+        mWebView!!.setWebViewClient(WebViewClient()) // 클릭시 새창 안뜨게
+        mWebSettings = mWebView!!.getSettings() //세부 세팅 등록
+        mWebSettings!!.setJavaScriptEnabled(true) // 웹페이지 자바스클비트 허용 여부
+        mWebSettings!!.setSupportMultipleWindows(false) // 새창 띄우기 허용 여부
+        mWebSettings!!.setJavaScriptCanOpenWindowsAutomatically(false) // 자바스크립트 새창 띄우기(멀티뷰) 허용 여부
+        mWebSettings!!.setLoadWithOverviewMode(true) // 메타태그 허용 여부
+        mWebSettings!!.setUseWideViewPort(true) // 화면 사이즈 맞추기 허용 여부
+        mWebSettings!!.setSupportZoom(false) // 화면 줌 허용 여부
+        mWebSettings!!.setBuiltInZoomControls(false) // 화면 확대 축소 허용 여부
+        mWebSettings!!.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL) // 컨텐츠 사이즈 맞추기
+        mWebSettings!!.setCacheMode(WebSettings.LOAD_NO_CACHE) // 브라우저 캐시 허용 여부
+        mWebSettings!!.setDomStorageEnabled(true) // 로컬저장소 허용 여부
+        // wide viewport를 사용하도록 설정
+        mWebView!!.getSettings().useWideViewPort = true
+        // 컨텐츠가 웹뷰보다 클 경우 스크린 크기에 맞게 조정
+        mWebView!!.getSettings().loadWithOverviewMode = true
+        //zoom 허용
+        mWebView!!.getSettings().builtInZoomControls = true
+        mWebView!!.getSettings().setSupportZoom(true)
+        mWebView!!.loadUrl("http://www.naver.com")
+        //webcctv.loadUrl("http://localhost:8090/?action=stream"); // 웹뷰에 표시할 라즈베리파이 주소, 웹뷰 시작
 
         val pairbluetoothButton = findViewById<View>(R.id.bluetooth_con_btn) as Button
         pairbluetoothButton.setOnClickListener(object  : View.OnClickListener{
@@ -282,6 +311,7 @@ class Main : AppCompatActivity() {
                                 System.arraycopy(readBuffer, 0, encodedBytes, 0,
                                     encodedBytes.size)
                                 var recvMessage = String(encodedBytes, Charsets.UTF_8)
+                                recieveph = recvMessage
                                 val array = recvMessage.split("X");
                                 for(j in array.indices) {
                                     println(array[j])
