@@ -7,9 +7,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.AsyncTask
-import android.os.Build
-import android.os.Bundle
+import android.os.*
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -21,11 +19,15 @@ import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.UnsupportedEncodingException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class Main : AppCompatActivity() {
+    private var mHandler: Handler? = null //핸들러
+    private var mPh: TextView? = null //ph
+    private var mTemp: TextView? = null //temp
     private var mWebView: WebView? = null // 웹뷰 선언
     private var mWebSettings: WebSettings? = null //웹뷰세팅
     private val REQUEST_BLUETOOTH_ENABLE = 100
@@ -34,7 +36,8 @@ class Main : AppCompatActivity() {
     private var mInputEditText_off: EditText? = null
     var mConnectedTask: ConnectedTask? = null
     var picker: TimePicker? = null
-    private var recieveph: String? = null
+
+    private val MESSAGE_READ = 2 //핸들러 메세지 수신
 
     private var mConnectedDeviceName: String? = null
     private var mConversationArrayAdapter: ArrayAdapter<String>? = null
@@ -50,18 +53,18 @@ class Main : AppCompatActivity() {
         // 없으면 디폴트 값은 현재시간
         val sharedPreferences = getSharedPreferences("daily alarm", MODE_PRIVATE)
         val millis =
-            sharedPreferences.getLong("nextNotifyTime", Calendar.getInstance().timeInMillis)
+                sharedPreferences.getLong("nextNotifyTime", Calendar.getInstance().timeInMillis)
 
         val nextNotifyTime: Calendar = GregorianCalendar()
         nextNotifyTime.timeInMillis = millis
 
         val nextDate = nextNotifyTime.time
         val date_text: String =
-            SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(nextDate)
+                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(nextDate)
         Toast.makeText(
-            applicationContext,
-            "[처음 실행시] 다음 알람은 " + date_text + "으로 알람이 설정되었습니다!",
-            Toast.LENGTH_SHORT
+                applicationContext,
+                "[처음 실행시] 다음 알람은 " + date_text + "으로 알람이 설정되었습니다!",
+                Toast.LENGTH_SHORT
         ).show()
 
         // 이전 설정값으로 TimePicker 초기화
@@ -85,7 +88,7 @@ class Main : AppCompatActivity() {
         mInputEditText_off = findViewById<View>(R.id.edit02) as EditText
         mConnectionStatus = findViewById<View>(R.id.connection_status_textview) as TextView
         mConversationArrayAdapter = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1)
+                android.R.layout.simple_list_item_1)
         //mMessageListview.adapter = mConversationArrayAdapter
         Log.d(TAG, "Initalizing Bluetooth adapter...")
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -156,18 +159,18 @@ class Main : AppCompatActivity() {
 
             val currentDateTime = calendar.time
             val date_text =
-                SimpleDateFormat("HHmm", Locale.getDefault()).format(
-                    currentDateTime
-                )
+                    SimpleDateFormat("HHmm", Locale.getDefault()).format(
+                            currentDateTime
+                    )
             Toast.makeText(applicationContext, date_text + "으로 알람이 설정되었습니다!", Toast.LENGTH_SHORT)
-                .show()
+                    .show()
 
             //  Preference에 설정한 값 저장
             val editor = getSharedPreferences("daily alarm", MODE_PRIVATE).edit()
             editor.putLong("nextNotifyTime", calendar.timeInMillis)
             editor.apply()
 
-            var sendMessage = "D"+"$date_text"
+            var sendMessage = "D" + "$date_text"
             if (sendMessage.length > 0) {
                 sendMessage_off(sendMessage)
             }
@@ -180,6 +183,10 @@ class Main : AppCompatActivity() {
 //                val intent = Intent(this@Bluetooth, WaterAcitivity::class.java)
 //                startActivity(intent)
 //            }})
+
+        mPh = findViewById<View>(R.id.ph) as TextView
+        mTemp = findViewById<View>(R.id.temp) as TextView
+
 
         mWebView = findViewById<View>(R.id.webcctv) as WebView?
         //웹뷰 관련
@@ -205,18 +212,40 @@ class Main : AppCompatActivity() {
         mWebView!!.loadUrl("http://www.naver.com")
         //webcctv.loadUrl("http://localhost:8090/?action=stream"); // 웹뷰에 표시할 라즈베리파이 주소, 웹뷰 시작
 
+
+        var recieves: Array<String?>
+        //핸들러 추가
+        mHandler = object : Handler() {
+            override fun handleMessage(msg: Message) {
+                if (msg.what == MESSAGE_READ) {
+                    var readMessage: String? = null
+                    try {
+                        readMessage = String((msg.obj as ByteArray), Charsets.UTF_8)
+                        recieves = readMessage.split(",").toTypedArray()
+                        mPh!!.setText(recieves[0])
+                        mTemp!!.setText(recieves[1])
+                    } catch (e: UnsupportedEncodingException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+
+
         val pairbluetoothButton = findViewById<View>(R.id.bluetooth_con_btn) as Button
-        pairbluetoothButton.setOnClickListener(object  : View.OnClickListener{
-            override fun onClick(v: View?){
+        pairbluetoothButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
                 val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
                 startActivity(intent)
-            }})
+            }
+        })
 
         val connectbluetoothButton = findViewById<View>(R.id.bluetooth_con_btn2) as Button
-        connectbluetoothButton.setOnClickListener (object : View.OnClickListener{
-            override fun onClick(v: View?){
+        connectbluetoothButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
                 showPairedDevicesListDialog()
-            }})
+            }
+        })
 
     }
 
@@ -290,66 +319,27 @@ class Main : AppCompatActivity() {
         private var mBluetoothSocket: BluetoothSocket? = null
         @SuppressLint("WrongThread")
         protected override fun doInBackground(vararg params: Void?): Boolean? {
-            val readBuffer = ByteArray(1024)
-            var readBufferPosition = 0
 
+            //바이트 받는 부분 수정
             while (true) {
                 if (isCancelled) return false
-                try {
-                    //Log.e("check", "메시지 들어왔따!")
-                    val bytesAvailable = mInputStream!!.available()
-                    //Log.e("check", "바이트로 받을거야.")
-                    if (bytesAvailable > 0) {
-                        Log.e("check", "바이트 받는다 시작!")
-                        val packetBytes = ByteArray(bytesAvailable)
-                        mInputStream!!.read(packetBytes)
-                        for (i in 0 until bytesAvailable) {
-                            var b = packetBytes[i]
-                            if (b == '\n'.toByte()) {
-                                var passfail = ""
-                                val encodedBytes = ByteArray(readBufferPosition)
-                                System.arraycopy(readBuffer, 0, encodedBytes, 0,
-                                    encodedBytes.size)
-                                var recvMessage = String(encodedBytes, Charsets.UTF_8)
-                                recieveph = recvMessage
-                                val array = recvMessage.split("X");
-                                for(j in array.indices) {
-                                    println(array[j])
-                                }
-                                println("여기");
-                                println(array[array.size - 1])
-//                                BPM = array[array.size - 1]
-                                Log.e("apple", recvMessage + "-------------")
-                                Log.e("apple", "$recvMessage" + "000000000000")
-
-                                if(recvMessage == "okay\n")
-                                    Log.e("apple", "변수 들어가는지...")
-
-                                //Toast.makeText(this@SelectDeviceActiviy, recvMessage, Toast.LENGTH_SHORT).show()
-                                //Log.e("check", "토스트 성공")
-                                //readBufferPosition = 0
-                                //publishProgress(recvMessage)
-                                // test?.setText(recvMessage)
-
-                            } else {
-                                Log.e("check", "혹시 여기로 빠지나?.")
-                                readBuffer[readBufferPosition++] = b
-                                Log.e("check", "그러네.")
-                            }
-
-                            Log.e("check", "바이트 받는중.")
+                val buffer = ByteArray(1024)
+                var bytes: Int
+                while (true) {
+                    try {
+                        // Read from the InputStream
+                        bytes = mInputStream!!.available()
+                        if (bytes != 0) {
+                            SystemClock.sleep(100)
+                            bytes = mInputStream!!.available()
+                            bytes = mInputStream!!.read(buffer, 0, bytes)
+                            mHandler!!.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+                                    .sendToTarget()
                         }
-
-                        Log.e("check", "바이트 ???.")
-//                        temptext.setText(abcd)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        break
                     }
-//                    Log.e("check", "바이트 다받았다..")
-//                    temptext.setText(abcd)
-
-                }
-                catch (e: IOException) {
-                    Log.e(TAG, "disconnected", e)
-                    return false
                 }
             }
             Log.e("check", "혹시 출력")
