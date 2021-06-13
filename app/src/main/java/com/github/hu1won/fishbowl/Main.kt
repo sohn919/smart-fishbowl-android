@@ -295,8 +295,7 @@ class Main : AppCompatActivity() {
                                 if(recvMessage == "okay\n")
                                     Log.e("apple", "변수 들어가는지...")
 
-                                //Toast.makeText(this@SelectDeviceActiviy, recvMessage, Toast.LENGTH_SHORT).show()
-                                //Log.e("check", "토스트 성공")
+                                //Toast.makeText(this@Main, recvMessage, Toast.LENGTH_SHORT).show()
                                 //readBufferPosition = 0
                                 //publishProgress(recvMessage)
                                 // test?.setText(recvMessage)
