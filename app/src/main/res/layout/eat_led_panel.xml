@@ -67,23 +67,71 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/led_on_btn"
+                <TextView
+                    android:id="@+id/ledtxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ON" />
+                    android:text="⚫ LED 조절" />
 
-                <Button
-                    android:id="@+id/led_off_btn"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="OFF" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
 
-                <Button
-                    android:id="@+id/eat_btn"
+                    <Button
+                        android:id="@+id/led_on_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="ON" />
+
+                    <Button
+                        android:id="@+id/led_off_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="OFF" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="먹이주기" />
+                    android:text="⚫ 먹이 주기" />
+
+
+                <TimePicker
+                    android:id="@+id/timePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/button"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    android:timePickerMode="spinner"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <Button
+                        android:id="@+id/eat_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="먹이주기(수동)" />
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="먹이주기(자동)" />
+                </LinearLayout>
 
                 <EditText
                     android:id="@+id/edit01"
