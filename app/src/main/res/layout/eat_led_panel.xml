@@ -84,7 +84,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
-                        android:text="ON" />
+                        android:text="ON"
+                        android:textColor="@color/white" />
 
                     <Button
                         android:id="@+id/led_off_btn"
@@ -102,15 +103,14 @@
 
 
                 <TimePicker
-                    android:id="@+id/timePicker"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:timePickerMode="spinner"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/button"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    android:timePickerMode="spinner"/>
+                    app:layout_constraintVertical_chainStyle="packed" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -126,7 +126,7 @@
                         android:text="먹이주기(수동)" />
 
                     <Button
-                        android:id="@+id/button"
+                        android:id="@+id/eat_auto_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"

@@ -16,15 +16,21 @@
 
             <Button
                 android:id="@+id/bluetooth_con_btn"
+                style="@style/TextAppearance.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="bluetooth_con_btn" />
+                android:background="@android:color/holo_blue_light"
+                android:text="기기에서 블루투스 연결"
+                android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/bluetooth_con_btn2"
+                style="@style/TextAppearance.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="bluetooth_con_btn2" />
+                android:background="@android:color/holo_blue_dark"
+                android:text="어플에서 블루투스 연결"
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/connection_status_textview"
