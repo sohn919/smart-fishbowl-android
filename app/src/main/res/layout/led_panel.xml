@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="환수설정"
+                android:text="LED"
                 android:textColor="#3E3E3E" />
 
             <TextView
@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="120dp"
-                android:text="환수 기능을 설정합니다."
+                android:text="LED 기능을 설정합니다."
                 android:textColor="#AAA" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -60,22 +60,20 @@
             android:id="@+id/container"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:orientation="vertical">
-
+            android:orientation="vertical">>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-
                 <TextView
-                    android:id="@+id/ledtxt2"
+                    android:id="@+id/ledtxt3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="⚫ 환수 하기" />
+                    android:text="⚫ LED 조절" />
 
                 <TimePicker
-                    android:id="@+id/watertime"
+                    android:id="@+id/ledtime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:timePickerMode="spinner"
@@ -91,23 +89,36 @@
                     android:weightSum="1">
 
                     <Button
-                        android:id="@+id/water_on_btn"
+                        android:id="@+id/led_on_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
-                        android:text="환수하기(수동)" />
+                        android:text="ON" />
 
                     <Button
-                        android:id="@+id/water_auto_btn"
+                        android:id="@+id/led_off_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
-                        android:text="환수하기(자동)" />
+                        android:text="OFF" />
 
                 </LinearLayout>
 
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
 
+                    <Button
+                        android:id="@+id/led_auto_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="LED(자동)" />
+
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
     </com.github.florent37.expansionpanel.ExpansionLayout>

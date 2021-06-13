@@ -35,7 +35,9 @@ class Main : AppCompatActivity() {
     private var mInputEditText: EditText? = null
     private var mInputEditText_off: EditText? = null
     var mConnectedTask: ConnectedTask? = null
-    var picker: TimePicker? = null
+    var eatpicker: TimePicker? = null
+    var ledpicker: TimePicker? = null
+    var waterpicker: TimePicker? = null
 
     private val MESSAGE_READ = 2 //핸들러 메세지 수신
 
@@ -46,46 +48,122 @@ class Main : AppCompatActivity() {
 
         setContentView(R.layout.main)
 
-        picker = findViewById<View>(R.id.time) as TimePicker
-        picker!!.setIs24HourView(true)
+        eatpicker = findViewById<View>(R.id.eattime) as TimePicker
+        eatpicker!!.setIs24HourView(true)
 
-        // 앞서 설정한 값으로 보여주기
+        ledpicker = findViewById<View>(R.id.ledtime) as TimePicker
+        ledpicker = findViewById<View>(R.id.ledtime) as TimePicker
+
+        waterpicker = findViewById<View>(R.id.watertime) as TimePicker
+        waterpicker = findViewById<View>(R.id.watertime) as TimePicker
+
+
+        // led앞서 설정한 값으로 보여주기
         // 없으면 디폴트 값은 현재시간
-        val sharedPreferences = getSharedPreferences("daily alarm", MODE_PRIVATE)
-        val millis =
-                sharedPreferences.getLong("nextNotifyTime", Calendar.getInstance().timeInMillis)
+        val ledsharedPreferences = getSharedPreferences("led alarm", MODE_PRIVATE)
+        val ledmillis =
+                ledsharedPreferences.getLong("nextNotifyLedTime", Calendar.getInstance().timeInMillis)
 
-        val nextNotifyTime: Calendar = GregorianCalendar()
-        nextNotifyTime.timeInMillis = millis
+        val nextNotifyLedTime: Calendar = GregorianCalendar()
+        nextNotifyLedTime.timeInMillis = ledmillis
 
-        val nextDate = nextNotifyTime.time
-        val date_text: String =
-                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(nextDate)
+        val lednextDate = nextNotifyLedTime.time
+        val leddate_text: String =
+                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(lednextDate)
         Toast.makeText(
                 applicationContext,
-                "[처음 실행시] 다음 알람은 " + date_text + "으로 알람이 설정되었습니다!",
+                "[LED] 다음 알람은 " + leddate_text + "으로 알람이 설정되었습니다!",
                 Toast.LENGTH_SHORT
         ).show()
 
         // 이전 설정값으로 TimePicker 초기화
-        val currentTime = nextNotifyTime.time
-        val HourFormat = SimpleDateFormat("kk", Locale.getDefault())
-        val MinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
+        val lcurrentTime = nextNotifyLedTime.time
+        val lHourFormat = SimpleDateFormat("kk", Locale.getDefault())
+        val lMinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
 
-        val pre_hour: Int = HourFormat.format(currentTime).toInt()
-        val pre_minute: Int = MinuteFormat.format(currentTime).toInt()
+        val lpre_hour: Int = lHourFormat.format(lcurrentTime).toInt()
+        val lpre_minute: Int = lMinuteFormat.format(lcurrentTime).toInt()
+
+
+        // eat앞서 설정한 값으로 보여주기
+        // 없으면 디폴트 값은 현재시간
+        val eatsharedPreferences = getSharedPreferences("eat alarm", MODE_PRIVATE)
+        val eatmillis =
+                eatsharedPreferences.getLong("nextNotifyEatTime", Calendar.getInstance().timeInMillis)
+
+        val nextNotifyEatTime: Calendar = GregorianCalendar()
+        nextNotifyEatTime.timeInMillis = eatmillis
+
+        val eatnextDate = nextNotifyEatTime.time
+        val eatdate_text: String =
+                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(eatnextDate)
+        Toast.makeText(
+                applicationContext,
+                "[먹이] 다음 알람은 " + eatdate_text + "으로 알람이 설정되었습니다!",
+                Toast.LENGTH_SHORT
+        ).show()
+
+        // 이전 설정값으로 TimePicker 초기화
+        val ecurrentTime = nextNotifyEatTime.time
+        val eHourFormat = SimpleDateFormat("kk", Locale.getDefault())
+        val eMinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
+
+        val epre_hour: Int = eHourFormat.format(ecurrentTime).toInt()
+        val epre_minute: Int = eMinuteFormat.format(ecurrentTime).toInt()
+
+
+        // water앞서 설정한 값으로 보여주기
+        // 없으면 디폴트 값은 현재시간
+        val watersharedPreferences = getSharedPreferences("water alarm", MODE_PRIVATE)
+        val watermillis =
+                watersharedPreferences.getLong("nextNotifyWaterTime", Calendar.getInstance().timeInMillis)
+
+        val nextNotifyWaterTime: Calendar = GregorianCalendar()
+        nextNotifyEatTime.timeInMillis = watermillis
+
+        val waternextDate = nextNotifyEatTime.time
+        val waterdate_text: String =
+                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(waternextDate)
+        Toast.makeText(
+                applicationContext,
+                "[환수] 다음 알람은 " + waterdate_text + "으로 알람이 설정되었습니다!",
+                Toast.LENGTH_SHORT
+        ).show()
+
+        // 이전 설정값으로 TimePicker 초기화
+        val wcurrentTime = nextNotifyEatTime.time
+        val wHourFormat = SimpleDateFormat("kk", Locale.getDefault())
+        val wMinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
+
+        val wpre_hour: Int = wHourFormat.format(wcurrentTime).toInt()
+        val wpre_minute: Int = wMinuteFormat.format(wcurrentTime).toInt()
+
 
 
         if (Build.VERSION.SDK_INT >= 23) {
-            picker!!.hour = pre_hour
-            picker!!.minute = pre_minute
+            eatpicker!!.hour = epre_hour
+            eatpicker!!.minute = epre_minute
         } else {
-            picker!!.currentHour = pre_hour
-            picker!!.currentMinute = pre_minute
+            eatpicker!!.currentHour = epre_hour
+            eatpicker!!.currentMinute = epre_minute
         }
 
-        mInputEditText = findViewById<View>(R.id.edit01) as EditText
-        mInputEditText_off = findViewById<View>(R.id.edit02) as EditText
+        if (Build.VERSION.SDK_INT >= 23) {
+            ledpicker!!.hour = lpre_hour
+            ledpicker!!.minute = lpre_minute
+        } else {
+            ledpicker!!.currentHour = lpre_hour
+            ledpicker!!.currentMinute = lpre_minute
+        }
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            waterpicker!!.hour = wpre_hour
+            waterpicker!!.minute = wpre_minute
+        } else {
+            waterpicker!!.currentHour = wpre_hour
+            waterpicker!!.currentMinute = wpre_minute
+        }
+
         mConnectionStatus = findViewById<View>(R.id.connection_status_textview) as TextView
         mConversationArrayAdapter = ArrayAdapter(this,
                 android.R.layout.simple_list_item_1)
@@ -123,6 +201,24 @@ class Main : AppCompatActivity() {
             }
         }
 
+        val water_on_Button = findViewById<View>(R.id.water_on_btn) as Button
+        water_on_Button.setOnClickListener {
+//            var sendMessage = mInputEditText!!.text.toString()
+            var sendMessage = "W"
+            if (sendMessage.length > 0) {
+                sendMessage(sendMessage)
+            }
+        }
+
+        val eat_on_Button = findViewById<View>(R.id.eat_btn) as Button
+        eat_on_Button.setOnClickListener {
+            var sendMessage = "E"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
+
+
         val eat_auto = findViewById<View>(R.id.eat_auto_btn) as Button
         eat_auto.setOnClickListener {
             val hour: Int
@@ -130,11 +226,11 @@ class Main : AppCompatActivity() {
             val minute: Int
             val am_pm: String
             if (Build.VERSION.SDK_INT >= 23) {
-                hour_24 = picker!!.hour
-                minute = picker!!.minute
+                hour_24 = eatpicker!!.hour
+                minute = eatpicker!!.minute
             } else {
-                hour_24 = picker!!.currentHour
-                minute = picker!!.currentMinute
+                hour_24 = eatpicker!!.currentHour
+                minute = eatpicker!!.currentMinute
             }
             if (hour_24 > 12) {
                 am_pm = "PM"
@@ -166,11 +262,118 @@ class Main : AppCompatActivity() {
                     .show()
 
             //  Preference에 설정한 값 저장
-            val editor = getSharedPreferences("daily alarm", MODE_PRIVATE).edit()
-            editor.putLong("nextNotifyTime", calendar.timeInMillis)
+            val editor = getSharedPreferences("eat alarm", MODE_PRIVATE).edit()
+            editor.putLong("nextNotifyEatTime", calendar.timeInMillis)
             editor.apply()
 
             var sendMessage = "D" + "$date_text"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
+
+        val water_auto = findViewById<View>(R.id.water_auto_btn) as Button
+        water_auto.setOnClickListener {
+            val hour: Int
+            val hour_24: Int
+            val minute: Int
+            val am_pm: String
+            if (Build.VERSION.SDK_INT >= 23) {
+                hour_24 = waterpicker!!.hour
+                minute = waterpicker!!.minute
+            } else {
+                hour_24 = waterpicker!!.currentHour
+                minute = waterpicker!!.currentMinute
+            }
+            if (hour_24 > 12) {
+                am_pm = "PM"
+                hour = hour_24
+            } else {
+                hour = hour_24
+                am_pm = "AM"
+            }
+
+            // 현재 지정된 시간으로 알람 시간 설정
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar[Calendar.HOUR_OF_DAY] = hour_24
+//            calendar[Calendar.HOUR] = hour_24
+            calendar[Calendar.MINUTE] = minute
+            calendar[Calendar.SECOND] = 0
+
+            // 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
+
+            val currentDateTime = calendar.time
+            val date_text =
+                    SimpleDateFormat("HHmm", Locale.getDefault()).format(
+                            currentDateTime
+                    )
+            Toast.makeText(applicationContext, date_text + "으로 알람이 설정되었습니다!", Toast.LENGTH_SHORT)
+                    .show()
+
+            //  Preference에 설정한 값 저장
+            val editor = getSharedPreferences("water alarm", MODE_PRIVATE).edit()
+            editor.putLong("nextNotifyWaterTime", calendar.timeInMillis)
+            editor.apply()
+
+            var sendMessage = "W" + "$date_text"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
+
+
+        val led_auto = findViewById<View>(R.id.led_auto_btn) as Button
+        led_auto.setOnClickListener {
+            val hour: Int
+            val hour_24: Int
+            val minute: Int
+            val am_pm: String
+            if (Build.VERSION.SDK_INT >= 23) {
+                hour_24 = ledpicker!!.hour
+                minute = ledpicker!!.minute
+            } else {
+                hour_24 = ledpicker!!.currentHour
+                minute = ledpicker!!.currentMinute
+            }
+            if (hour_24 > 12) {
+                am_pm = "PM"
+                hour = hour_24
+            } else {
+                hour = hour_24
+                am_pm = "AM"
+            }
+
+            // 현재 지정된 시간으로 알람 시간 설정
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar[Calendar.HOUR_OF_DAY] = hour_24
+//            calendar[Calendar.HOUR] = hour_24
+            calendar[Calendar.MINUTE] = minute
+            calendar[Calendar.SECOND] = 0
+
+            // 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
+
+            val currentDateTime = calendar.time
+            val date_text =
+                    SimpleDateFormat("HHmm", Locale.getDefault()).format(
+                            currentDateTime
+                    )
+            Toast.makeText(applicationContext, date_text + "으로 알람이 설정되었습니다!", Toast.LENGTH_SHORT)
+                    .show()
+
+            //  Preference에 설정한 값 저장
+            val editor = getSharedPreferences("led alarm", MODE_PRIVATE).edit()
+            editor.putLong("nextNotifyLedTime", calendar.timeInMillis)
+            editor.apply()
+
+            var sendMessage = "L" + "$date_text"
             if (sendMessage.length > 0) {
                 sendMessage_off(sendMessage)
             }
@@ -383,7 +586,7 @@ class Main : AppCompatActivity() {
             } catch (e: IOException) {
                 Log.e(TAG, "Exception during send", e)
             }
-            mInputEditText!!.setText("")
+//            mInputEditText!!.setText("")
         }
 
         init {
