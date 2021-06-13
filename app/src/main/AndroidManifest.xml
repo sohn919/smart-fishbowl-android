@@ -2,19 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.hu1won.fishbowl">
 
+    <uses-permission android:name="android.permission.INTERNET" />  <!--인터넷 권한 선언-->
+    <!--블루투스 권한 선언-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- 블루투스 주변 장치 검색을 위한 위치 권한 선언-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Fishbowl">
-        <activity android:name=".MainActivity">
-            <intent-filter>
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"> <!--액션바를 비활성-->
+
+
+        <activity android:name=".Splash">
+            <intent-filter> <!--처음 화면-->
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Main">
         </activity>
     </application>
 

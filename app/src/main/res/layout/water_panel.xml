@@ -22,18 +22,18 @@
             android:paddingRight="16dp">
 
             <TextView
-                android:layout_centerVertical="true"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="Trip name"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="환수설정"
                 android:textColor="#3E3E3E" />
 
             <TextView
-                android:layout_centerVertical="true"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="120dp"
                 android:layout_width="wrap_content"
-                android:text="Carribean cruise"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="120dp"
+                android:text="환수 기능을 설정합니다."
                 android:textColor="#AAA" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -62,12 +62,12 @@
             android:layout_width="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:background="#EEE"
-                android:gravity="center"
-                android:layout_height="100dp"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:text="content" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            </LinearLayout>
 
         </LinearLayout>
 
