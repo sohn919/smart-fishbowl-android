@@ -197,7 +197,7 @@ class Main : AppCompatActivity() {
 //            var sendMessage = mInputEditText!!.text.toString()
             var sendMessage = "OFF"
             if (sendMessage.length > 0) {
-                sendMessage_off(sendMessage)
+                sendMessage(sendMessage)
             }
         }
 
@@ -214,7 +214,7 @@ class Main : AppCompatActivity() {
         eat_on_Button.setOnClickListener {
             var sendMessage = "E"
             if (sendMessage.length > 0) {
-                sendMessage_off(sendMessage)
+                sendMessage(sendMessage)
             }
         }
 
@@ -268,7 +268,7 @@ class Main : AppCompatActivity() {
 
             var sendMessage = "D" + "$date_text"
             if (sendMessage.length > 0) {
-                sendMessage_off(sendMessage)
+                sendMessage(sendMessage)
             }
         }
 
@@ -321,7 +321,7 @@ class Main : AppCompatActivity() {
 
             var sendMessage = "W" + "$date_text"
             if (sendMessage.length > 0) {
-                sendMessage_off(sendMessage)
+                sendMessage(sendMessage)
             }
         }
 
@@ -375,7 +375,7 @@ class Main : AppCompatActivity() {
 
             var sendMessage = "L" + "$date_text"
             if (sendMessage.length > 0) {
-                sendMessage_off(sendMessage)
+                sendMessage(sendMessage)
             }
         }
 
@@ -658,14 +658,6 @@ class Main : AppCompatActivity() {
     }
 
     fun sendMessage(msg: String) {
-        if (mConnectedTask != null) {
-            mConnectedTask!!.write(msg)
-            Log.d(TAG, "send message: $msg")
-            //mConversationArrayAdapter!!.insert("Me:  $msg", 0)
-        }
-    }
-
-    fun sendMessage_off(msg: String) {
         if (mConnectedTask != null) {
             mConnectedTask!!.write(msg)
             Log.d(TAG, "send message: $msg")
