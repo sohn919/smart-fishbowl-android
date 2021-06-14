@@ -7,29 +7,39 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.AsyncTask
-import android.os.Build
-import android.os.Bundle
+import android.os.*
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.UnsupportedEncodingException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class Main : AppCompatActivity() {
-
+    private var mHandler: Handler? = null //핸들러
+    private var mPh: TextView? = null //ph
+    private var mTemp: TextView? = null //temp
+    private var mWebView: WebView? = null // 웹뷰 선언
+    private var mWebSettings: WebSettings? = null //웹뷰세팅
     private val REQUEST_BLUETOOTH_ENABLE = 100
     private var mConnectionStatus: TextView? = null
     private var mInputEditText: EditText? = null
     private var mInputEditText_off: EditText? = null
     var mConnectedTask: ConnectedTask? = null
-    var picker: TimePicker? = null
+    var eatpicker: TimePicker? = null
+    var ledpicker: TimePicker? = null
+    var waterpicker: TimePicker? = null
+
+    private val MESSAGE_READ = 2 //핸들러 메세지 수신
 
     private var mConnectedDeviceName: String? = null
     private var mConversationArrayAdapter: ArrayAdapter<String>? = null
@@ -38,49 +48,125 @@ class Main : AppCompatActivity() {
 
         setContentView(R.layout.main)
 
-        picker = findViewById<View>(R.id.time) as TimePicker
-        picker!!.setIs24HourView(true)
+        eatpicker = findViewById<View>(R.id.eattime) as TimePicker
+        eatpicker!!.setIs24HourView(true)
 
-        // 앞서 설정한 값으로 보여주기
+        ledpicker = findViewById<View>(R.id.ledtime) as TimePicker
+        ledpicker = findViewById<View>(R.id.ledtime) as TimePicker
+
+        waterpicker = findViewById<View>(R.id.watertime) as TimePicker
+        waterpicker = findViewById<View>(R.id.watertime) as TimePicker
+
+
+        // led앞서 설정한 값으로 보여주기
         // 없으면 디폴트 값은 현재시간
-        val sharedPreferences = getSharedPreferences("daily alarm", MODE_PRIVATE)
-        val millis =
-            sharedPreferences.getLong("nextNotifyTime", Calendar.getInstance().timeInMillis)
+        val ledsharedPreferences = getSharedPreferences("led alarm", MODE_PRIVATE)
+        val ledmillis =
+                ledsharedPreferences.getLong("nextNotifyLedTime", Calendar.getInstance().timeInMillis)
 
-        val nextNotifyTime: Calendar = GregorianCalendar()
-        nextNotifyTime.timeInMillis = millis
+        val nextNotifyLedTime: Calendar = GregorianCalendar()
+        nextNotifyLedTime.timeInMillis = ledmillis
 
-        val nextDate = nextNotifyTime.time
-        val date_text: String =
-            SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(nextDate)
+        val lednextDate = nextNotifyLedTime.time
+        val leddate_text: String =
+                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(lednextDate)
         Toast.makeText(
-            applicationContext,
-            "[처음 실행시] 다음 알람은 " + date_text + "으로 알람이 설정되었습니다!",
-            Toast.LENGTH_SHORT
+                applicationContext,
+                "[LED] 다음 알람은 " + leddate_text + "으로 알람이 설정되었습니다!",
+                Toast.LENGTH_SHORT
         ).show()
 
         // 이전 설정값으로 TimePicker 초기화
-        val currentTime = nextNotifyTime.time
-        val HourFormat = SimpleDateFormat("kk", Locale.getDefault())
-        val MinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
+        val lcurrentTime = nextNotifyLedTime.time
+        val lHourFormat = SimpleDateFormat("kk", Locale.getDefault())
+        val lMinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
 
-        val pre_hour: Int = HourFormat.format(currentTime).toInt()
-        val pre_minute: Int = MinuteFormat.format(currentTime).toInt()
+        val lpre_hour: Int = lHourFormat.format(lcurrentTime).toInt()
+        val lpre_minute: Int = lMinuteFormat.format(lcurrentTime).toInt()
+
+
+        // eat앞서 설정한 값으로 보여주기
+        // 없으면 디폴트 값은 현재시간
+        val eatsharedPreferences = getSharedPreferences("eat alarm", MODE_PRIVATE)
+        val eatmillis =
+                eatsharedPreferences.getLong("nextNotifyEatTime", Calendar.getInstance().timeInMillis)
+
+        val nextNotifyEatTime: Calendar = GregorianCalendar()
+        nextNotifyEatTime.timeInMillis = eatmillis
+
+        val eatnextDate = nextNotifyEatTime.time
+        val eatdate_text: String =
+                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(eatnextDate)
+        Toast.makeText(
+                applicationContext,
+                "[먹이] 다음 알람은 " + eatdate_text + "으로 알람이 설정되었습니다!",
+                Toast.LENGTH_SHORT
+        ).show()
+
+        // 이전 설정값으로 TimePicker 초기화
+        val ecurrentTime = nextNotifyEatTime.time
+        val eHourFormat = SimpleDateFormat("kk", Locale.getDefault())
+        val eMinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
+
+        val epre_hour: Int = eHourFormat.format(ecurrentTime).toInt()
+        val epre_minute: Int = eMinuteFormat.format(ecurrentTime).toInt()
+
+
+        // water앞서 설정한 값으로 보여주기
+        // 없으면 디폴트 값은 현재시간
+        val watersharedPreferences = getSharedPreferences("water alarm", MODE_PRIVATE)
+        val watermillis =
+                watersharedPreferences.getLong("nextNotifyWaterTime", Calendar.getInstance().timeInMillis)
+
+        val nextNotifyWaterTime: Calendar = GregorianCalendar()
+        nextNotifyEatTime.timeInMillis = watermillis
+
+        val waternextDate = nextNotifyEatTime.time
+        val waterdate_text: String =
+                SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(waternextDate)
+        Toast.makeText(
+                applicationContext,
+                "[환수] 다음 알람은 " + waterdate_text + "으로 알람이 설정되었습니다!",
+                Toast.LENGTH_SHORT
+        ).show()
+
+        // 이전 설정값으로 TimePicker 초기화
+        val wcurrentTime = nextNotifyEatTime.time
+        val wHourFormat = SimpleDateFormat("kk", Locale.getDefault())
+        val wMinuteFormat = SimpleDateFormat("mm", Locale.getDefault())
+
+        val wpre_hour: Int = wHourFormat.format(wcurrentTime).toInt()
+        val wpre_minute: Int = wMinuteFormat.format(wcurrentTime).toInt()
+
 
 
         if (Build.VERSION.SDK_INT >= 23) {
-            picker!!.hour = pre_hour
-            picker!!.minute = pre_minute
+            eatpicker!!.hour = epre_hour
+            eatpicker!!.minute = epre_minute
         } else {
-            picker!!.currentHour = pre_hour
-            picker!!.currentMinute = pre_minute
+            eatpicker!!.currentHour = epre_hour
+            eatpicker!!.currentMinute = epre_minute
         }
 
-        mInputEditText = findViewById<View>(R.id.edit01) as EditText
-        mInputEditText_off = findViewById<View>(R.id.edit02) as EditText
+        if (Build.VERSION.SDK_INT >= 23) {
+            ledpicker!!.hour = lpre_hour
+            ledpicker!!.minute = lpre_minute
+        } else {
+            ledpicker!!.currentHour = lpre_hour
+            ledpicker!!.currentMinute = lpre_minute
+        }
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            waterpicker!!.hour = wpre_hour
+            waterpicker!!.minute = wpre_minute
+        } else {
+            waterpicker!!.currentHour = wpre_hour
+            waterpicker!!.currentMinute = wpre_minute
+        }
+
         mConnectionStatus = findViewById<View>(R.id.connection_status_textview) as TextView
         mConversationArrayAdapter = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1)
+                android.R.layout.simple_list_item_1)
         //mMessageListview.adapter = mConversationArrayAdapter
         Log.d(TAG, "Initalizing Bluetooth adapter...")
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -99,8 +185,8 @@ class Main : AppCompatActivity() {
         // 이 버튼은 나중에 아두이노에 신호 줄때 사용하세요!
         val sendButton = findViewById<View>(R.id.led_on_btn) as Button
         sendButton.setOnClickListener {
-            var sendMessage = mInputEditText!!.text.toString()
-//            var sendMessage = "ON"
+//            var sendMessage = mInputEditText!!.text.toString()
+            var sendMessage = "ON"
             if (sendMessage.length > 0) {
                 sendMessage(sendMessage)
             }
@@ -115,6 +201,24 @@ class Main : AppCompatActivity() {
             }
         }
 
+        val water_on_Button = findViewById<View>(R.id.water_on_btn) as Button
+        water_on_Button.setOnClickListener {
+//            var sendMessage = mInputEditText!!.text.toString()
+            var sendMessage = "W"
+            if (sendMessage.length > 0) {
+                sendMessage(sendMessage)
+            }
+        }
+
+        val eat_on_Button = findViewById<View>(R.id.eat_btn) as Button
+        eat_on_Button.setOnClickListener {
+            var sendMessage = "E"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
+
+
         val eat_auto = findViewById<View>(R.id.eat_auto_btn) as Button
         eat_auto.setOnClickListener {
             val hour: Int
@@ -122,11 +226,11 @@ class Main : AppCompatActivity() {
             val minute: Int
             val am_pm: String
             if (Build.VERSION.SDK_INT >= 23) {
-                hour_24 = picker!!.hour
-                minute = picker!!.minute
+                hour_24 = eatpicker!!.hour
+                minute = eatpicker!!.minute
             } else {
-                hour_24 = picker!!.currentHour
-                minute = picker!!.currentMinute
+                hour_24 = eatpicker!!.currentHour
+                minute = eatpicker!!.currentMinute
             }
             if (hour_24 > 12) {
                 am_pm = "PM"
@@ -151,18 +255,125 @@ class Main : AppCompatActivity() {
 
             val currentDateTime = calendar.time
             val date_text =
-                SimpleDateFormat("HHmm", Locale.getDefault()).format(
-                    currentDateTime
-                )
+                    SimpleDateFormat("HHmm", Locale.getDefault()).format(
+                            currentDateTime
+                    )
             Toast.makeText(applicationContext, date_text + "으로 알람이 설정되었습니다!", Toast.LENGTH_SHORT)
-                .show()
+                    .show()
 
             //  Preference에 설정한 값 저장
-            val editor = getSharedPreferences("daily alarm", MODE_PRIVATE).edit()
-            editor.putLong("nextNotifyTime", calendar.timeInMillis)
+            val editor = getSharedPreferences("eat alarm", MODE_PRIVATE).edit()
+            editor.putLong("nextNotifyEatTime", calendar.timeInMillis)
             editor.apply()
 
-            var sendMessage = "D"+"$date_text"
+            var sendMessage = "D" + "$date_text"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
+
+        val water_auto = findViewById<View>(R.id.water_auto_btn) as Button
+        water_auto.setOnClickListener {
+            val hour: Int
+            val hour_24: Int
+            val minute: Int
+            val am_pm: String
+            if (Build.VERSION.SDK_INT >= 23) {
+                hour_24 = waterpicker!!.hour
+                minute = waterpicker!!.minute
+            } else {
+                hour_24 = waterpicker!!.currentHour
+                minute = waterpicker!!.currentMinute
+            }
+            if (hour_24 > 12) {
+                am_pm = "PM"
+                hour = hour_24
+            } else {
+                hour = hour_24
+                am_pm = "AM"
+            }
+
+            // 현재 지정된 시간으로 알람 시간 설정
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar[Calendar.HOUR_OF_DAY] = hour_24
+//            calendar[Calendar.HOUR] = hour_24
+            calendar[Calendar.MINUTE] = minute
+            calendar[Calendar.SECOND] = 0
+
+            // 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
+
+            val currentDateTime = calendar.time
+            val date_text =
+                    SimpleDateFormat("HHmm", Locale.getDefault()).format(
+                            currentDateTime
+                    )
+            Toast.makeText(applicationContext, date_text + "으로 알람이 설정되었습니다!", Toast.LENGTH_SHORT)
+                    .show()
+
+            //  Preference에 설정한 값 저장
+            val editor = getSharedPreferences("water alarm", MODE_PRIVATE).edit()
+            editor.putLong("nextNotifyWaterTime", calendar.timeInMillis)
+            editor.apply()
+
+            var sendMessage = "W" + "$date_text"
+            if (sendMessage.length > 0) {
+                sendMessage_off(sendMessage)
+            }
+        }
+
+
+        val led_auto = findViewById<View>(R.id.led_auto_btn) as Button
+        led_auto.setOnClickListener {
+            val hour: Int
+            val hour_24: Int
+            val minute: Int
+            val am_pm: String
+            if (Build.VERSION.SDK_INT >= 23) {
+                hour_24 = ledpicker!!.hour
+                minute = ledpicker!!.minute
+            } else {
+                hour_24 = ledpicker!!.currentHour
+                minute = ledpicker!!.currentMinute
+            }
+            if (hour_24 > 12) {
+                am_pm = "PM"
+                hour = hour_24
+            } else {
+                hour = hour_24
+                am_pm = "AM"
+            }
+
+            // 현재 지정된 시간으로 알람 시간 설정
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar[Calendar.HOUR_OF_DAY] = hour_24
+//            calendar[Calendar.HOUR] = hour_24
+            calendar[Calendar.MINUTE] = minute
+            calendar[Calendar.SECOND] = 0
+
+            // 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
+
+            val currentDateTime = calendar.time
+            val date_text =
+                    SimpleDateFormat("HHmm", Locale.getDefault()).format(
+                            currentDateTime
+                    )
+            Toast.makeText(applicationContext, date_text + "으로 알람이 설정되었습니다!", Toast.LENGTH_SHORT)
+                    .show()
+
+            //  Preference에 설정한 값 저장
+            val editor = getSharedPreferences("led alarm", MODE_PRIVATE).edit()
+            editor.putLong("nextNotifyLedTime", calendar.timeInMillis)
+            editor.apply()
+
+            var sendMessage = "L" + "$date_text"
             if (sendMessage.length > 0) {
                 sendMessage_off(sendMessage)
             }
@@ -176,18 +387,68 @@ class Main : AppCompatActivity() {
 //                startActivity(intent)
 //            }})
 
+        mPh = findViewById<View>(R.id.ph) as TextView
+        mTemp = findViewById<View>(R.id.temp) as TextView
+
+
+        mWebView = findViewById<View>(R.id.webcctv) as WebView?
+        //웹뷰 관련
+        mWebView!!.setWebViewClient(WebViewClient()) // 클릭시 새창 안뜨게
+        mWebSettings = mWebView!!.getSettings() //세부 세팅 등록
+        mWebSettings!!.setJavaScriptEnabled(true) // 웹페이지 자바스클비트 허용 여부
+        mWebSettings!!.setSupportMultipleWindows(false) // 새창 띄우기 허용 여부
+        mWebSettings!!.setJavaScriptCanOpenWindowsAutomatically(false) // 자바스크립트 새창 띄우기(멀티뷰) 허용 여부
+        mWebSettings!!.setLoadWithOverviewMode(true) // 메타태그 허용 여부
+        mWebSettings!!.setUseWideViewPort(true) // 화면 사이즈 맞추기 허용 여부
+        mWebSettings!!.setSupportZoom(false) // 화면 줌 허용 여부
+        mWebSettings!!.setBuiltInZoomControls(false) // 화면 확대 축소 허용 여부
+        mWebSettings!!.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL) // 컨텐츠 사이즈 맞추기
+        mWebSettings!!.setCacheMode(WebSettings.LOAD_NO_CACHE) // 브라우저 캐시 허용 여부
+        mWebSettings!!.setDomStorageEnabled(true) // 로컬저장소 허용 여부
+        // wide viewport를 사용하도록 설정
+        mWebView!!.getSettings().useWideViewPort = true
+        // 컨텐츠가 웹뷰보다 클 경우 스크린 크기에 맞게 조정
+        mWebView!!.getSettings().loadWithOverviewMode = true
+        //zoom 허용
+        mWebView!!.getSettings().builtInZoomControls = true
+        mWebView!!.getSettings().setSupportZoom(true)
+        mWebView!!.loadUrl("http://www.naver.com")
+        //webcctv.loadUrl("http://localhost:8090/?action=stream"); // 웹뷰에 표시할 라즈베리파이 주소, 웹뷰 시작
+
+
+        var recieves: Array<String?>
+        //핸들러 추가
+        mHandler = object : Handler() {
+            override fun handleMessage(msg: Message) {
+                if (msg.what == MESSAGE_READ) {
+                    var readMessage: String? = null
+                    try {
+                        readMessage = String((msg.obj as ByteArray), Charsets.UTF_8)
+                        recieves = readMessage.split(",").toTypedArray()
+                        mPh!!.setText(recieves[0])
+                        mTemp!!.setText(recieves[1])
+                    } catch (e: UnsupportedEncodingException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+
+
         val pairbluetoothButton = findViewById<View>(R.id.bluetooth_con_btn) as Button
-        pairbluetoothButton.setOnClickListener(object  : View.OnClickListener{
-            override fun onClick(v: View?){
+        pairbluetoothButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
                 val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
                 startActivity(intent)
-            }})
+            }
+        })
 
         val connectbluetoothButton = findViewById<View>(R.id.bluetooth_con_btn2) as Button
-        connectbluetoothButton.setOnClickListener (object : View.OnClickListener{
-            override fun onClick(v: View?){
+        connectbluetoothButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
                 showPairedDevicesListDialog()
-            }})
+            }
+        })
 
     }
 
@@ -261,65 +522,27 @@ class Main : AppCompatActivity() {
         private var mBluetoothSocket: BluetoothSocket? = null
         @SuppressLint("WrongThread")
         protected override fun doInBackground(vararg params: Void?): Boolean? {
-            val readBuffer = ByteArray(1024)
-            var readBufferPosition = 0
 
+            //바이트 받는 부분 수정
             while (true) {
                 if (isCancelled) return false
-                try {
-                    //Log.e("check", "메시지 들어왔따!")
-                    val bytesAvailable = mInputStream!!.available()
-                    //Log.e("check", "바이트로 받을거야.")
-                    if (bytesAvailable > 0) {
-                        Log.e("check", "바이트 받는다 시작!")
-                        val packetBytes = ByteArray(bytesAvailable)
-                        mInputStream!!.read(packetBytes)
-                        for (i in 0 until bytesAvailable) {
-                            var b = packetBytes[i]
-                            if (b == '\n'.toByte()) {
-                                var passfail = ""
-                                val encodedBytes = ByteArray(readBufferPosition)
-                                System.arraycopy(readBuffer, 0, encodedBytes, 0,
-                                    encodedBytes.size)
-                                var recvMessage = String(encodedBytes, Charsets.UTF_8)
-                                val array = recvMessage.split("X");
-                                for(j in array.indices) {
-                                    println(array[j])
-                                }
-                                println("여기");
-                                println(array[array.size - 1])
-//                                BPM = array[array.size - 1]
-                                Log.e("apple", recvMessage + "-------------")
-                                Log.e("apple", "$recvMessage" + "000000000000")
-
-                                if(recvMessage == "okay\n")
-                                    Log.e("apple", "변수 들어가는지...")
-
-                                //Toast.makeText(this@SelectDeviceActiviy, recvMessage, Toast.LENGTH_SHORT).show()
-                                //Log.e("check", "토스트 성공")
-                                //readBufferPosition = 0
-                                //publishProgress(recvMessage)
-                                // test?.setText(recvMessage)
-
-                            } else {
-                                Log.e("check", "혹시 여기로 빠지나?.")
-                                readBuffer[readBufferPosition++] = b
-                                Log.e("check", "그러네.")
-                            }
-
-                            Log.e("check", "바이트 받는중.")
+                val buffer = ByteArray(1024)
+                var bytes: Int
+                while (true) {
+                    try {
+                        // Read from the InputStream
+                        bytes = mInputStream!!.available()
+                        if (bytes != 0) {
+                            SystemClock.sleep(100)
+                            bytes = mInputStream!!.available()
+                            bytes = mInputStream!!.read(buffer, 0, bytes)
+                            mHandler!!.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+                                    .sendToTarget()
                         }
-
-                        Log.e("check", "바이트 ???.")
-//                        temptext.setText(abcd)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        break
                     }
-//                    Log.e("check", "바이트 다받았다..")
-//                    temptext.setText(abcd)
-
-                }
-                catch (e: IOException) {
-                    Log.e(TAG, "disconnected", e)
-                    return false
                 }
             }
             Log.e("check", "혹시 출력")
@@ -363,7 +586,7 @@ class Main : AppCompatActivity() {
             } catch (e: IOException) {
                 Log.e(TAG, "Exception during send", e)
             }
-            mInputEditText!!.setText("")
+//            mInputEditText!!.setText("")
         }
 
         init {

@@ -67,33 +67,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/ledtxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="⚫ LED 조절" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <Button
-                        android:id="@+id/led_on_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:text="ON"
-                        android:textColor="@color/white" />
-
-                    <Button
-                        android:id="@+id/led_off_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:text="OFF" />
-                </LinearLayout>
 
                 <TextView
                     android:id="@+id/textView2"
@@ -103,7 +76,7 @@
 
 
                 <TimePicker
-                    android:id="@+id/time"
+                    android:id="@+id/eattime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:timePickerMode="spinner"
@@ -133,16 +106,6 @@
                         android:text="먹이주기(자동)" />
                 </LinearLayout>
 
-                <EditText
-                    android:id="@+id/edit01"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="ON" />
-                <EditText
-                    android:id="@+id/edit02"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="OFF" />
             </LinearLayout>
 
         </LinearLayout>

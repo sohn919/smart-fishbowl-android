@@ -58,7 +58,14 @@
                     android:layout_height="0.5dp"
                     android:background="#CCC" />
 
-                <include layout="@layout/eat_led_panel" />
+                <include layout="@layout/led_panel" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#CCC" />
+
+                <include layout="@layout/eat_panel" />
 
                 <View
                     android:layout_width="match_parent"
