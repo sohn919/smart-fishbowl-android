@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="상태확인"
+                android:text="범위 설정"
                 android:textColor="#3E3E3E" />
 
             <TextView
@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="120dp"
-                android:text="현재 어항의 상태를 확인합니다."
+                android:text="현재 어항의 온도와 PH 범위를 설정합니다."
                 android:textColor="#AAA" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -64,75 +64,127 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="100dp"
                 android:orientation="vertical">
 
                 <TableLayout
                     android:layout_width="410dp"
-                    android:layout_height="72dp"
-                    android:layout_margin="4dp"
+                    android:layout_height="150dp"
 
                     android:layout_marginBottom="28dp"
                     android:padding="14dp"
-                    android:stretchColumns="4"
+                    android:stretchColumns="5"
                     app:layout_constraintBottom_toTopOf="@+id/webcctv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent">
 
+
                     <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="352dp"
+                        android:layout_height="11dp"
                         android:layout_marginBottom="10dp">
 
+
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="90dp"
                             android:layout_height="wrap_content"
                             android:background="#25000000"
                             android:gravity="center"
-                            android:text="온도"
+                            android:text="온도 범위"
                             android:textSize="20sp" />
 
+                        <EditText
+                            android:id="@+id/temprecieve1"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:background="#00000000"
+                            android:ems="10"
+                            android:gravity="center"
+                            android:inputType="numberDecimal" />
+
+
                         <TextView
-                            android:id="@+id/ph"
                             android:layout_width="80dp"
                             android:layout_height="wrap_content"
                             android:background="#00000000"
                             android:gravity="center"
-                            android:textSize="20sp" />
+                            android:text="~"
+                            android:textSize="20dp" />
+
+                        <EditText
+                            android:id="@+id/temprecieve2"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:background="#00000000"
+                            android:ems="10"
+                            android:gravity="center"
+                            android:inputType="numberDecimal" />
+
+                        <Button
+                            android:id="@+id/button1"
+                            android:layout_width="70dp"
+                            android:layout_height="30dp"
+                            android:background="#25000000"
+                            android:text="확인" />
+
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="10dp">
+
 
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="90dp"
                             android:layout_height="wrap_content"
                             android:background="#25000000"
                             android:gravity="center"
-                            android:text="PH"
-                            android:textSize="20dp" />
+                            android:text="PH 범위"
+                            android:textSize="20sp" />
+
+                        <EditText
+                            android:id="@+id/phrecieve1"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:background="#00000000"
+                            android:ems="10"
+                            android:gravity="center"
+                            android:inputType="numberDecimal" />
+
 
                         <TextView
-                            android:id="@+id/temp"
                             android:layout_width="80dp"
                             android:layout_height="wrap_content"
                             android:background="#00000000"
                             android:gravity="center"
+                            android:text="~"
                             android:textSize="20dp" />
+
+                        <EditText
+                            android:id="@+id/phrecieve2"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:background="#00000000"
+                            android:ems="10"
+                            android:gravity="center"
+                            android:inputType="numberDecimal" />
+
+
+                        <Button
+                            android:id="@+id/button2"
+                            android:layout_width="70dp"
+                            android:layout_height="30dp"
+                            android:background="#25000000"
+                            android:text="확인" />
 
 
                     </TableRow>
 
                 </TableLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <WebView
-                        android:id="@+id/webcctv"
-                        android:layout_width="383dp"
-                        android:layout_height="280dp"
-                        android:layout_marginStart="15dp" />
-                </LinearLayout>
 
             </LinearLayout>
 
