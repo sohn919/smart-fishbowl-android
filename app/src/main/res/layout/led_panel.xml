@@ -72,6 +72,18 @@
                     android:layout_height="wrap_content"
                     android:text="⚫ LED 조절" />
 
+                <TextView
+                    android:id="@+id/ledtxt6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+
+                <TextView
+                    android:id="@+id/ledtxt4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="⚫ LED ON 자동 예약" />
+
                 <TimePicker
                     android:id="@+id/ledtime"
                     android:layout_width="match_parent"
@@ -81,6 +93,23 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed" />
+
+                <TextView
+                    android:id="@+id/ledtxt5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="⚫ LED OFF 자동 예약" />
+
+                <TimePicker
+                    android:id="@+id/ledtime2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:timePickerMode="spinner"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -111,11 +140,18 @@
                     android:weightSum="1">
 
                     <Button
-                        android:id="@+id/led_auto_btn"
+                        android:id="@+id/led_autoon_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="LED(자동)" />
+                        android:layout_weight="0.5"
+                        android:text="LED ON(자동)" />
+
+                    <Button
+                        android:id="@+id/led_autooff_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="LED OFF(자동)" />
 
                 </LinearLayout>
             </LinearLayout>
