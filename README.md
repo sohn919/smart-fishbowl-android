@@ -12,6 +12,13 @@
 
 
 ### 앱 화면
++ 블루투스 통신을 통해 온도와 PH 농도의 값을 받아오도록 개발하였습니다.
++ NestedScrollView를 통해 패널을 개발하였습니다.
++ 위의 ScrollView는 오픈소스를 사용하였습니다.
+	
+       implementation 'com.github.florent37:expansionpanel:1.2.4'
+
++ TimePicker를 통해 시간을 설정할 수 있도록 하였습니다.
 ![7](https://user-images.githubusercontent.com/84082544/147329729-09554bf8-a50f-409b-8b76-20fb217cb32e.PNG)
 ![8](https://user-images.githubusercontent.com/84082544/147329732-b348dada-9c30-4686-a112-9139b00d26c0.PNG)
 
