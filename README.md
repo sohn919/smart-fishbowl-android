@@ -13,8 +13,7 @@
 
 ### 앱 화면
 + 블루투스 통신을 통해 온도와 PH 농도의 값을 받아오도록 개발하였습니다.
-+ NestedScrollView를 통해 패널을 개발하였습니다.
-+ 위의 ScrollView는 오픈소스를 사용하였습니다.
++ 패널은 ScrollView 오픈소스를 사용하였습니다.
 	
        implementation 'com.github.florent37:expansionpanel:1.2.4'
 
